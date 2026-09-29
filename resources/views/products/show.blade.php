@@ -5,127 +5,135 @@
 @section('content')
 <div class="container">
 
-    <div class="detail">
+    <div class="card">
 
-        <div class="detail-grid">
-
-            {{-- Product Image --}}
-            <div>
-                @if($product->image)
-                    <img
-                        src="{{ asset('storage/' . $product->image) }}"
-                        alt="{{ $product->name }}"
-                        class="detail-image"
-                    >
-                @else
-                    <div
-                        style="
-                            width:100%;
-                            height:350px;
-                            background:#eee;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            border-radius:8px;
-                        "
-                    >
-                        No Image
-                    </div>
-                @endif
+        @if($product->image)
+            <img
+                src="{{ asset('storage/' . $product->image) }}"
+                alt="{{ $product->name }}"
+                style="width:100%; max-width:500px; height:350px; object-fit:contain; border-radius:10px;"
+            >
+        @else
+            <div style="
+                width:100%;
+                max-width:500px;
+                height:350px;
+                background:#f1f1f1;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                border-radius:10px;
+                margin-bottom:20px;
+            ">
+                No Image
             </div>
+        @endif
 
-            {{-- Product Information --}}
-            <div>
+        <h1>{{ $product->name }}</h1>
 
-                <h1 class="detail-title">
-                    {{ $product->name }}
-                </h1>
+        @if($product->category)
+            <p>
+                <strong>Category:</strong>
+                {{ $product->category->name }}
+            </p>
+        @endif
 
-                @if($product->category)
-                    <p>
-                        Category:
-                        <strong>{{ $product->category->name }}</strong>
-                    </p>
-                @endif
+        <div style="margin:15px 0;">
+            <span style="font-size:28px; font-weight:bold;">
+                ৳{{ number_format($product->price, 2) }}
+            </span>
 
-                <div class="detail-price">
-                    ৳{{ number_format($product->price, 2) }}
-
-                    @if($product->old_price)
-                        <span class="old-price">
-                            ৳{{ number_format($product->old_price, 2) }}
-                        </span>
-                    @endif
-                </div>
-
-                <p style="margin-top:15px;">
-                    @if($product->stock > 0)
-                        <strong style="color:green;">
-                            In Stock
-                        </strong>
-
-                        <br>
-
-                        Available:
-                        {{ $product->stock }} pcs
-                    @else
-                        <strong style="color:red;">
-                            Out of Stock
-                        </strong>
-                    @endif
-                </p>
-
-                {{-- Description --}}
-                @if($product->description)
-                    <div class="description">
-                        <h3>Description</h3>
-
-                        <p>
-                            {!! nl2br(e($product->description)) !!}
-                        </p>
-                    </div>
-                @endif
-
-                {{-- Order Button --}}
-                @if($product->stock > 0)
-
-                    <a
-                        href="{{ route('orders.create', $product->slug) }}"
-                        class="btn"
-                    >
-                        🛒 Order Now
-                    </a>
-
-                @else
-
-                    <button
-                        type="button"
-                        class="btn"
-                        disabled
-                        style="background:#999; cursor:not-allowed;"
-                    >
-                        Out of Stock
-                    </button>
-
-                @endif
-
-                <a
-                    href="{{ route('products.index') }}"
-                    style="
-                        display:block;
-                        text-align:center;
-                        margin-top:12px;
-                        color:#555;
-                    "
-                >
-                    ← Back to Products
-                </a>
-
-            </div>
-
+            @if($product->old_price)
+                <span style="
+                    margin-left:10px;
+                    text-decoration:line-through;
+                    color:#777;
+                ">
+                    ৳{{ number_format($product->old_price, 2) }}
+                </span>
+            @endif
         </div>
 
+        @if($product->stock > 0)
+            <p>
+                <strong>Stock:</strong>
+                {{ $product->stock }}
+            </p>
+        @else
+            <p style="color:red;">
+                <strong>Out of Stock</strong>
+            </p>
+        @endif
+
+        @if($product->description)
+            <div style="margin:20px 0;">
+                <h3>Description</h3>
+                <p>{{ $product->description }}</p>
+            </div>
+        @endif
+
+        @if($product->stock > 0)
+            <a
+                href="{{ route('orders.create', $product->slug) }}"
+                class="btn"
+            >
+                🛒 Order Now
+            </a>
+        @else
+            <button
+                type="button"
+                class="btn"
+                disabled
+                style="opacity:.5;"
+            >
+                Out of Stock
+            </button>
+        @endif
+
+        <br><br>
+
+        <a href="{{ route('products.index') }}">
+            ← Back to Products
+        </a>
+
     </div>
+
+    @if($relatedProducts->count())
+        <div style="margin-top:40px;">
+            <h2>Related Products</h2>
+
+            <div class="product-grid">
+
+                @foreach($relatedProducts as $related)
+                    <div class="card">
+
+                        @if($related->image)
+                            <img
+                                src="{{ asset('storage/' . $related->image) }}"
+                                alt="{{ $related->name }}"
+                                style="width:100%; height:200px; object-fit:contain;"
+                            >
+                        @endif
+
+                        <h3>{{ $related->name }}</h3>
+
+                        <p>
+                            ৳{{ number_format($related->price, 2) }}
+                        </p>
+
+                        <a
+                            href="{{ route('products.show', $related->slug) }}"
+                            class="btn"
+                        >
+                            View Product
+                        </a>
+
+                    </div>
+                @endforeach
+
+            </div>
+        </div>
+    @endif
 
 </div>
 @endsection
