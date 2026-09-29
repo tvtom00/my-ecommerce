@@ -1,77 +1,74 @@
 @extends('layouts.app')
 
-@section('title', 'Products - My Ecommerce')
+@section('title', 'Products')
 
 @section('content')
-
 <div class="container">
 
-    <h1 class="page-title">আমাদের Products</h1>
+    <h1>Products</h1>
 
-    @if($products->count())
+    <div class="product-grid">
 
-        <div class="products">
+        @forelse($products as $product)
 
-            @foreach($products as $product)
+            <div class="card">
 
-                <div class="product-card">
-
-                    @if($product->image)
-                        <img
-                            src="{{ asset('storage/' . $product->image) }}"
-                            alt="{{ $product->name }}"
-                            class="product-image"
-                        >
-                    @else
-                        <div class="product-image"></div>
-                    @endif
-
-                    <div class="product-info">
-
-                        <div class="product-name">
-                            {{ $product->name }}
-                        </div>
-
-                        <div>
-                            <span class="price">
-                                ৳{{ number_format($product->price, 2) }}
-                            </span>
-
-                            @if($product->old_price)
-                                <span class="old-price">
-                                    ৳{{ number_format($product->old_price, 2) }}
-                                </span>
-                            @endif
-                        </div>
-
-                        <a
-                            href="{{ route('products.show', $product->slug) }}"
-                            class="btn"
-                        >
-                            View Product
-                        </a>
-
+                @if($product->image)
+                    <img
+                        src="{{ asset('storage/' . $product->image) }}"
+                        alt="{{ $product->name }}"
+                        style="width:100%; height:220px; object-fit:contain;"
+                    >
+                @else
+                    <div style="
+                        height:220px;
+                        background:#f1f1f1;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                    ">
+                        No Image
                     </div>
+                @endif
 
-                </div>
+                <h2>{{ $product->name }}</h2>
 
-            @endforeach
+                <p>
+                    <strong>
+                        ৳{{ number_format($product->price, 2) }}
+                    </strong>
 
-        </div>
+                    @if($product->old_price)
+                        <span style="
+                            text-decoration:line-through;
+                            color:#777;
+                            margin-left:8px;
+                        ">
+                            ৳{{ number_format($product->old_price, 2) }}
+                        </span>
+                    @endif
+                </p>
 
-        <div class="pagination">
-            {{ $products->links() }}
-        </div>
+                <a
+                    href="{{ url('/product/' . $product->slug) }}"
+                    class="btn"
+                >
+                    View Product
+                </a>
 
-    @else
+            </div>
 
-        <div class="detail">
-            <h3>এখনো কোনো product যোগ করা হয়নি।</h3>
-            <p>Admin panel থেকে product যোগ করলে এখানে দেখা যাবে।</p>
-        </div>
+        @empty
 
-    @endif
+            <p>No products found.</p>
+
+        @endforelse
+
+    </div>
+
+    <div style="margin-top:30px;">
+        {{ $products->links() }}
+    </div>
 
 </div>
-
 @endsection
