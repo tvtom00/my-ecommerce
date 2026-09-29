@@ -8,24 +8,11 @@ Route::get('/', function () {
     return redirect()->route('products.index');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Product Routes
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/products', [ProductController::class, 'index'])
     ->name('products.index');
 
 Route::get('/product/{slug}', [ProductController::class, 'show'])
     ->name('products.show');
-
-
-/*
-|--------------------------------------------------------------------------
-| Order Routes
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/product/{slug}/order', [OrderController::class, 'create'])
     ->name('orders.create');
